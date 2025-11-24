@@ -1,0 +1,102 @@
+print('Que comece o jogo! Adivinhe a palavra, mas cuidado para não cair na armadilha.')
+
+numero_rodadas = int(input())
+
+for i in range(numero_rodadas):
+    rodada_atual = i + 1
+    print(f'Rodada {rodada_atual}/{numero_rodadas}:')
+
+    palavra_secreta = input().lower()
+    
+    fantasma_valida = False
+    while not fantasma_valida:
+        palavra_fantasma = input().lower()
+        
+        letras_comuns_encontradas = ''
+        qtd_letras_comum = 0
+        
+        for letra in palavra_fantasma:
+            if letra in palavra_secreta and letra not in letras_comuns_encontradas:
+                letras_comuns_encontradas += letra
+                qtd_letras_comum += 1
+        
+        if qtd_letras_comum >= 3:
+            print(f'A palavra fantasma possui {qtd_letras_comum} letras presentes na palavra secreta. Tente uma com menos de 3 letras iguais.')
+        else:
+            fantasma_valida = True
+
+    vidas = 6
+    letras_chutadas = ''
+    total_tentativas = 0
+    
+    palavra_revelada_str = ''
+    tamanho_palavra = len(palavra_secreta)
+    for j in range(tamanho_palavra):
+        palavra_revelada_str += '_'
+        if j < tamanho_palavra - 1:
+            palavra_revelada_str += ' '
+    print(f'Palavra: {palavra_revelada_str}')
+
+    jogo_ativo = True
+    while jogo_ativo:
+        chute = input().lower()
+
+        if chute in letras_chutadas:
+            print(f"Você já tentou a letra '{chute}'. Tente outra.")
+        else:
+            total_tentativas += 1
+            letras_chutadas += chute
+            
+            if chute in palavra_secreta:
+                print(f"Boa! A letra '{chute}' está na palavra.")
+            elif chute in palavra_fantasma:
+                print(f"CUIDADO! A letra '{chute}' é uma armadilha! Você perdeu 2 vidas.")
+                vidas -= 2
+            else:
+                print(f"Naao! A letra '{chute}' não está na palavra. Você perdeu 1 vida.")
+                vidas -= 1
+
+            palavra_revelada_str = ''
+            acertos = 0
+            for j in range(tamanho_palavra):
+                letra_atual = palavra_secreta[j]
+                if letra_atual in letras_chutadas:
+                    palavra_revelada_str += letra_atual
+                    acertos += 1
+                else:
+                    palavra_revelada_str += '_'
+                
+                if j < tamanho_palavra - 1:
+                    palavra_revelada_str += ' '
+
+            letras_chutadas_str = ''
+            tamanho_chutadas = len(letras_chutadas)
+            for j in range(tamanho_chutadas):
+                letras_chutadas_str += letras_chutadas[j]
+                if j < tamanho_chutadas - 1:
+                    letras_chutadas_str += ', '
+            
+            venceu = True
+            for letra in palavra_secreta:
+                if letra not in letras_chutadas:
+                    venceu = False
+                    break
+            
+            perdeu = vidas <= 0
+
+            if venceu:
+                palavra_final = palavra_secreta.capitalize()
+                print(f'Parabéns, Adivinho! Você descobriu a palavra secreta: {palavra_final}.')
+                print(f'Total de tentativas: {total_tentativas}')
+                jogo_ativo = False
+            elif perdeu:
+                palavra_final = palavra_secreta.capitalize()
+                print(f'Fim de jogo! A forca está completa e o Adivinho perdeu. A palavra secreta era: {palavra_final}.')
+                jogo_ativo = False
+            else:
+                print('=====================')
+                print(f'Palavra: {palavra_revelada_str}')
+                print(f'Vidas restantes: {vidas}')
+                if letras_chutadas_str != '':
+                    print(f'Letras chutadas: {letras_chutadas_str}')
+                print('=====================')
